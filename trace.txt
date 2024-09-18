@@ -1,0 +1,135 @@
+Client and Server Command Line Traces
+
+>> Client <<
+
+seyeonlim@Seyeons-MacBook-Pro CSC249-P1 % python3 rpc-client.py
+Client starting - connecting to server at IP 127.0.0.1 and port 65432
+Connection established.
+
+Enter message to send to server.
+Possible commannds are:
+    1. get_days_between <date1> <date2>
+        -> This will return the number of days between the two dates.
+    2. add_days <date> <days>
+        -> This will return the date after adding the given number of days.
+    3. quit
+        -> Disconnect from the server.
+
+get_days_between 2000-01-01 2000-02-01
+Sending message 'get_days_between 2000-01-01 2000-02-01' to server...
+Message sent, waiting for reply...
+Received reply from server: The number of days between 2000-01-01 and 2000-02-01 is 31 days.
+
+Enter message to send to server.
+Possible commannds are:
+    1. get_days_between <date1> <date2>
+        -> This will return the number of days between the two dates.
+    2. add_days <date> <days>
+        -> This will return the date after adding the given number of days.
+    3. quit
+        -> Disconnect from the server.
+
+add_days 2000-01-01 365
+Sending message 'add_days 2000-01-01 365' to server...
+Message sent, waiting for reply...
+Received reply from server: The date after adding 365 days to 2000-01-01 is 2000-12-31.
+
+Enter message to send to server.
+Possible commannds are:
+    1. get_days_between <date1> <date2>
+        -> This will return the number of days between the two dates.
+    2. add_days <date> <days>
+        -> This will return the date after adding the given number of days.
+    3. quit
+        -> Disconnect from the server.
+
+wrong input
+Sending message 'wrong input' to server...
+Message sent, waiting for reply...
+Received reply from server: Invalid command format. Please use the format: <command> <arg1> <arg2>
+
+Enter message to send to server.
+Possible commannds are:
+    1. get_days_between <date1> <date2>
+        -> This will return the number of days between the two dates.
+    2. add_days <date> <days>
+        -> This will return the date after adding the given number of days.
+    3. quit
+        -> Disconnect from the server.
+
+wrongCommand 0000 1111
+Sending message 'wrongCommand 0000 1111' to server...
+Message sent, waiting for reply...
+Received reply from server: Operation 'wrongCommand' is invalid. Possible operations are: 1. get_days_between; 2. add_days
+
+Enter message to send to server.
+Possible commannds are:
+    1. get_days_between <date1> <date2>
+        -> This will return the number of days between the two dates.
+    2. add_days <date> <days>
+        -> This will return the date after adding the given number of days.
+    3. quit
+        -> Disconnect from the server.
+
+get_days_between 20000101 20000201
+Sending message 'get_days_between 20000101 20000201' to server...
+Message sent, waiting for reply...
+Received reply from server: Invalid date format. Please use an existing date and format the date in YYYY-MM-DD.
+
+Enter message to send to server.
+Possible commannds are:
+    1. get_days_between <date1> <date2>
+        -> This will return the number of days between the two dates.
+    2. add_days <date> <days>
+        -> This will return the date after adding the given number of days.
+    3. quit
+        -> Disconnect from the server.
+
+add_days 2000-01-01 wrongDays
+Sending message 'add_days 2000-01-01 wrongDays' to server...
+Message sent, waiting for reply...
+Received reply from server: Invalid number of days. Number of days should be an integer.
+
+Enter message to send to server.
+Possible commannds are:
+    1. get_days_between <date1> <date2>
+        -> This will return the number of days between the two dates.
+    2. add_days <date> <days>
+        -> This will return the date after adding the given number of days.
+    3. quit
+        -> Disconnect from the server.
+
+quit
+Client is done, exiting...
+
+>> Server <<
+
+seyeonlim@Seyeons-MacBook-Pro CSC249-P1 % python3 rpc-server.py
+server starting - listening for connections at IP 127.0.0.1 and port 65432
+Connected established with ('127.0.0.1', 52968)
+Received client message: 'get_days_between 2000-01-01 2000-02-01' [38 bytes]
+Parsing message...
+Msg parsed and validity checked. Operation: get_days_between, Param1: 2000-01-01, Param2: 2000-02-01
+Operation: get_days_between, Param1: 2000-01-01, Param2: 2000-02-01
+Sending response to client...
+Response sent to client!
+Received client message: 'add_days 2000-01-01 365' [23 bytes]
+Parsing message...
+Msg parsed and validity checked. Operation: add_days, Param1: 2000-01-01, Param2: 365
+Operation: add_days, Param1: 2000-01-01, Param2: 365
+Sending response to client...
+Response sent to client!
+Received client message: 'wrong input' [11 bytes]
+Parsing message...
+Invalid input from client. Sending error message...
+Received client message: 'wrongCommand 0000 1111' [22 bytes]
+Parsing message...
+Invalid input from client. Sending error message...
+Received client message: 'get_days_between 20000101 20000201' [34 bytes]
+Parsing message...
+Invalid input from client. Sending error message...
+Received client message: 'add_days 2000-01-01 wrongDays' [29 bytes]
+Parsing message...
+Invalid input from client. Sending error message...
+Received empty input from client
+Server is done!
