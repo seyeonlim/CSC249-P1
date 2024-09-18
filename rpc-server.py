@@ -4,9 +4,38 @@ from datetime import datetime, timedelta
 HOST = "127.0.0.1"
 PORT = 65432
 
+def date_valid(date):
+    # Check if the date is in the format YYYY-MM-DD
+    try:
+        datetime.strptime(date, "%Y-%m-%d")
+        return True
+    except ValueError:
+        return False
+    
 def parse_msg(msg):
+    # Parse the message into operation and parameters
     words = msg.split()
-    operation, param1, param2 = words
+
+    # If the length is not 3, the input is invalid
+    if len(words) != 3:
+        return "Invalid command format. Please use the format: <command> <arg1> <arg2>"
+    
+    # Assign the operation and parameters from msg
+    operation, param1, param2 = words 
+
+    possible_operations = ["get_days_between", "add_days"]
+    if operation not in possible_operations:
+        return f"Operation '{operation}' is invalid. Possible operations are: 1. get_days_between; 2. add_days"
+    
+    if operation == "get_days_between":
+        if not (date_valid(param1) and date_valid(param2)):
+            return "Invalid date format. Please use an existing date and format the date in YYYY-MM-DD."
+    elif operation == "add_days":
+        if not date_valid(param1):
+            return "Invalid date format. Please use an existing date and format the date in YYYY-MM-DD."
+        if not param2.isdigit():
+            return "Invalid number of days. Number of days should be an integer."
+
     return operation, param1, param2
 
 def get_days_between(date1, date2):
@@ -34,13 +63,26 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         while True:
             data = conn.recv(1024)
             if not data:
+                print("Received empty input from client")
+                conn.sendall("Empty input received".encode('utf-8'))
                 break
-            print(f"Received client message: '{data}' [{len(data)} bytes]")
+            print(f"Received client message: '{data.decode('utf-8')}' [{len(data)} bytes]")
             print("Parsing message...")
 
             # Decode msg - otherwise the input is in bytes
             data = data.decode('utf-8')
             
+            # Parse msg and check input validity. Error (str) will be returned when msg is invalid.
+            result = parse_msg(data)
+            if isinstance(result, str):
+                # Print error message
+                print("Invalid input from client. Sending error message...")
+                conn.sendall(result.encode('utf-8'))
+                continue
+            else:
+                operation, param1, param2 = result
+                print(f"Msg parsed and validity checked. Operation: {operation}, Param1: {param1}, Param2: {param2}")
+
             operation, param1, param2 = parse_msg(data)
             print(f"Operation: {operation}, Param1: {param1}, Param2: {param2}")
             response = ""
@@ -54,4 +96,4 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             conn.sendall(response.encode('utf-8')) 
             print("Response sent to client!")
 
-print("server is done!")
+print("Server is done!")
